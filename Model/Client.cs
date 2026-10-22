@@ -21,6 +21,8 @@ namespace _4RTools.Model
 
         public string mapAddress { get; set; }
 
+        public string openChatAddress { get; set; } // Optional. Falls back to the default address when missing; 0x0 disables the chat check.
+
         public int hpAddressPointer { get; set; }
         public int nameAddressPointer { get; set; }
         public int mapAddressPointer { get; set; }
@@ -100,6 +102,7 @@ namespace _4RTools.Model
         private int statusBufferAddress { get; set; }
         private int currentOpenChatAddress { get; set; }
         private int _num = 0;
+        private const int DEFAULT_OPEN_CHAT_ADDRESS = 0x012A714C;
 
         public Client(string processName, int currentHPBaseAddress, int currentNameAddress, int currentMapAddress)
         {
@@ -108,7 +111,7 @@ namespace _4RTools.Model
             this.currentMapAddress = currentMapAddress;
             this.processName = processName;
             this.statusBufferAddress = currentHPBaseAddress + 0x474;
-            this.currentOpenChatAddress = 0x012A714C;
+            this.currentOpenChatAddress = DEFAULT_OPEN_CHAT_ADDRESS;
         }
 
         public Client(ClientDTO dto)
@@ -118,7 +121,9 @@ namespace _4RTools.Model
             this.currentNameAddress = Convert.ToInt32(dto.nameAddress, 16);
             this.currentMapAddress = Convert.ToInt32(dto.mapAddress, 16);
             this.statusBufferAddress = this.currentHPBaseAddress + 0x474;
-            this.currentOpenChatAddress = 0x012A714C;
+            this.currentOpenChatAddress = string.IsNullOrEmpty(dto.openChatAddress)
+                ? DEFAULT_OPEN_CHAT_ADDRESS
+                : Convert.ToInt32(dto.openChatAddress, 16);
         }
 
         public Client(string processName)
@@ -244,6 +249,7 @@ namespace _4RTools.Model
         }
         public bool ReadOpenChat()
         {
+            if (this.currentOpenChatAddress == 0) return false;
             return Convert.ToBoolean(ReadMemoryAsByte(this.currentOpenChatAddress));
         }
 

@@ -85,11 +85,32 @@ namespace _4RTools.Model
 
             try
             {
-                return JsonConvert.DeserializeObject<List<ClientDTO>>(localServers);
+                List<ClientDTO> clients = JsonConvert.DeserializeObject<List<ClientDTO>>(localServers);
+                if (AddMissingDefaultClients(clients)) OverwriteLocalFile(clients);
+                return clients;
             }catch
             {
                 return new List<ClientDTO>();
             }
+        }
+
+        // Existing supported_servers.json files predate the Blacknarok client, so append it when absent.
+        private static bool AddMissingDefaultClients(List<ClientDTO> clients)
+        {
+            ClientDTO blacknarok = clients.Find(c => c.name == "BlacknaROk");
+            if (blacknarok == null)
+            {
+                clients.Add(new ClientDTO("BlacknaROk", "Blacknarok", "0x017314C0", "0x01734130", "0x0172D564") { openChatAddress = "0x0" });
+                return true;
+            }
+
+            // Early builds shipped a name address 8 bytes off, which read only the tail of the name.
+            if (blacknarok.nameAddress == "0x01734138")
+            {
+                blacknarok.nameAddress = "0x01734130";
+                return true;
+            }
+            return false;
         }
 
         private static string LoadLocalCityNameFile()

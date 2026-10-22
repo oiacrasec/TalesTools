@@ -168,7 +168,7 @@ namespace _4RTools.Forms
                 // Procura pelo processo rtales.bin na lista de processos
                 foreach (Process p in Process.GetProcesses())
                 {
-                    if (p.MainWindowTitle != "" && (p.ProcessName.ToLower() == "rtales" || p.ProcessName.ToLower() == "rtales.bin"))
+                    if (p.MainWindowTitle != "" && (p.ProcessName.ToLower() == "rtales" || p.ProcessName.ToLower() == "rtales.bin" || p.ProcessName.ToLower() == "blacknarok"))
                     {
                         // Verifica se o cliente está na lista de clientes suportados
                         if (!ClientListSingleton.ExistsByProcessName(p.ProcessName))
@@ -250,7 +250,7 @@ namespace _4RTools.Forms
                     this.processCB.Items.Add(processString);
 
                     // Verifica se é o RagnaTales e se ainda não está conectado
-                    if ((p.ProcessName.ToLower() == "rtales" || p.ProcessName.ToLower() == "rtales.bin") &&
+                    if ((p.ProcessName.ToLower() == "rtales" || p.ProcessName.ToLower() == "rtales.bin" || p.ProcessName.ToLower() == "blacknarok") &&
                         (ClientSingleton.GetClient() == null || this.processCB.SelectedItem == null))
                     {
                         try
